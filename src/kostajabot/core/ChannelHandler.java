@@ -5,18 +5,32 @@
  */
 package kostajabot.core;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author kostersson
  */
 public class ChannelHandler {
-    private Telnet client;
+    private TelnetConnectionHandler client;
+    private ArrayList<Channel> channels;
 
-    public ChannelHandler(Telnet client) {
-        client = client;
+    public ChannelHandler(TelnetConnectionHandler telnetClient) {
+        client = telnetClient;
+        channels = new ArrayList<>();
+        // tester
+        addChannelToChannels("#kostajabot", "Quakenet");
+    }
+    
+    public void addChannelToChannels(String name, String network){
+        Channel channel = new Channel(name, network);
+        channels.add(channel);
     }
     
     public void joiner(){
-        client.write("JOIN ");
+        for (Channel channel : channels) {
+            client.write("JOIN " + channel.getChannelName());
+        }
+        
     }
 }

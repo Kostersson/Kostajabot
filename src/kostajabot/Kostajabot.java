@@ -5,7 +5,8 @@
  */
 package kostajabot;
 
-import kostajabot.core.Telnet;
+import configurations.ConfigurationPropertiesLoader;
+import kostajabot.core.TelnetConnectionHandler;
 
 /**
  *
@@ -17,9 +18,10 @@ public class Kostajabot {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Telnet telnet;
+        ConfigurationPropertiesLoader conf = new ConfigurationPropertiesLoader();
+        TelnetConnectionHandler telnet;
         try {
-            telnet = new Telnet();
+            telnet = new TelnetConnectionHandler(conf);
             while(true){
                 telnet.run();
             }
