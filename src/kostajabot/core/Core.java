@@ -1,7 +1,7 @@
 package kostajabot.core;
 
 import configurations.ConfigurationPropertiesLoader;
-import kostajabot.core.stringhandlers.*;
+import kostajabot.core.stringhandlers.MessageHandler;
 
 /**
  *

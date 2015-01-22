@@ -33,9 +33,7 @@ public class TelnetConnectionHandler implements Runnable {
         while (true) {
             sb.append(ch);
             if (ch == '\n') {
-                String line = sb.toString();
-                handleString(line);
-                return line;
+                return sb.toString();
             }
             ch = (char) in.read();
         }
