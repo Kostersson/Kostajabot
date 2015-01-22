@@ -84,13 +84,15 @@ public class TelnetConnectionHandler implements Runnable {
     }
 
     private void handleMessage(String str) {
+        String username = null;
+        String message = null;
         Pattern p = Pattern.compile(":(.*)!");
         Matcher matcher = p.matcher(str);
         if (matcher.find()) {
-            System.out.println(matcher.group(1));
+            username = matcher.group(1);
         }
-        str = str.replaceAll(":(.*) PRIVMSG ", "");
-        System.out.println(str);
+        message = str.replaceAll(":(.*) PRIVMSG ", "");
+        System.out.println("<" + username + "> " + message);
     }
 
     @Override
