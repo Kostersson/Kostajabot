@@ -5,6 +5,7 @@
  */
 package configurations;
 
+import configurations.exceptions.NoPropertyFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -37,7 +38,11 @@ public class ConfigurationPropertiesLoader {
         }
     }
 
-    public String getProperty(String name) {
-        return properties.getProperty(name);
+    public String getProperty(String name)throws NoPropertyFoundException {
+        String property = properties.getProperty(name);
+        if(property.isEmpty()){
+            throw new NoPropertyFoundException();
+        }
+        return property;
     }
 }
