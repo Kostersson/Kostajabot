@@ -8,47 +8,34 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class TelnetConnectionHandler implements Runnable {
 
     private final TelnetClient client = new TelnetClient();
     private final InputStream in;
     private final PrintStream out;
-    private ChannelHandler channelHandler;
     private String server;
+    private Core core;
     private final ConfigurationPropertiesLoader configuration;
 
-    public TelnetConnectionHandler(ConfigurationPropertiesLoader conf) throws Exception {
+    public TelnetConnectionHandler(Core coreObject,ConfigurationPropertiesLoader conf) throws Exception {
+        core = coreObject;
         configuration = conf;
-        channelHandler = new ChannelHandler(this);
-
-        client.connect("irc.fi.quakenet.org", 6667);
+        client.connect(configuration.getProperty("quakenetServer"), 
+                Integer.parseInt(configuration.getProperty("ircPort")));
         in = client.getInputStream();
         out = new PrintStream(client.getOutputStream());
-        setup();
     }
 
-    private void setup() throws Exception {
-        handleString(readLine());
-        // Load user data
-        String nick = configuration.getProperty("nick");
-        String ident = configuration.getProperty("ident");
-        String usermodes = configuration.getProperty("usermodes");
-        String realname = configuration.getProperty("realname");
-        write("NICK " + nick);
-        handleString(readLine());
-        write("USER  " + ident + " " + usermodes + " *  : " + realname);
-    }
-
-    private String readLine() throws IOException {
+    private String readLine() throws IOException, Exception {
         StringBuilder sb = new StringBuilder();
         char ch = (char) in.read();
         while (true) {
             sb.append(ch);
             if (ch == '\n') {
-                return sb.toString();
+                String line = sb.toString();
+                handleString(line);
+                return line;
             }
             ch = (char) in.read();
         }
@@ -75,24 +62,15 @@ public class TelnetConnectionHandler implements Runnable {
         pingPong(str);
         if (str.contains("End of /MOTD command") || str.contains("MOTD File is missing")) {
             server = str.split(" ")[0].substring(1);
-            System.out.println("My server: " + server);
-            channelHandler.joiner();
+            core.autoJoinChannels();
         }
-        if (str.matches("(?s):(.*) PRIVMSG (.*)")) {
-            handleMessage(str);
+        else{
+            core.handleString(str);
         }
     }
-
-    private void handleMessage(String str) {
-        String username = null;
-        String message = null;
-        Pattern p = Pattern.compile(":(.*)!");
-        Matcher matcher = p.matcher(str);
-        if (matcher.find()) {
-            username = matcher.group(1);
-        }
-        message = str.replaceAll(":(.*) PRIVMSG ", "");
-        System.out.println("<" + username + "> " + message);
+    
+    private String getServer(){
+        return server;
     }
 
     @Override
