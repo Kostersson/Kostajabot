@@ -5,6 +5,8 @@
  */
 package kostajabot.core;
 
+import kostajabot.core.exceptions.*;
+
 /**
  *
  * @author Kostersson
@@ -18,11 +20,17 @@ public class Channel {
         this.network = network;
     }
 
-    public String getChannelName() {
+    public String getChannelName() throws NoChannelNameException{
+        if(channelName.isEmpty()){
+            throw new NoChannelNameException();
+        }
         return channelName;
     }
 
-    public String getNetwork() {
+    public String getNetwork() throws NoNetworkException{
+        if(network.isEmpty()){
+            throw new NoNetworkException();
+        }
         return network;
     }
 

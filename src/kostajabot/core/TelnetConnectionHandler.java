@@ -1,6 +1,7 @@
 package kostajabot.core;
 
 import configurations.ConfigurationPropertiesLoader;
+import java.io.IOException;
 import org.apache.commons.net.telnet.TelnetClient;
 
 import java.io.InputStream;
@@ -39,7 +40,7 @@ public class TelnetConnectionHandler implements Runnable {
         write("USER  " + ident + " " + usermodes + " *  : " + realname);
     }
 
-    private String readLine() throws Exception {
+    private String readLine() throws IOException {
         StringBuilder sb = new StringBuilder();
         char ch = (char) in.read();
         while (true) {
@@ -51,13 +52,13 @@ public class TelnetConnectionHandler implements Runnable {
         }
     }
 
-    public void write(String value) throws Exception {
+    public void write(String value) throws IOException {
         out.println(value);
         out.flush();
         System.out.println(value);
     }
 
-    public void disconnect() throws Exception {
+    public void disconnect() throws IOException {
         client.disconnect();
     }
 

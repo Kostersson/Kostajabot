@@ -27,7 +27,7 @@ public class ChannelHandler {
         channels.add(channel);
     }
     
-    public void joiner(){
+    public void joiner() throws Exception{
         for (Channel channel : channels) {
             client.write("JOIN " + channel.getChannelName());
         }
