@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TelnetConnectionHandler implements Runnable {
 
@@ -21,7 +23,7 @@ public class TelnetConnectionHandler implements Runnable {
     public TelnetConnectionHandler(ConfigurationPropertiesLoader conf) throws Exception {
         configuration = conf;
         channelHandler = new ChannelHandler(this);
-        
+
         client.connect("irc.fi.quakenet.org", 6667);
         in = client.getInputStream();
         out = new PrintStream(client.getOutputStream());
@@ -62,20 +64,33 @@ public class TelnetConnectionHandler implements Runnable {
         client.disconnect();
     }
 
-    private void pingPong(String str) throws Exception{
+    private void pingPong(String str) throws Exception {
         if (str.startsWith("PING")) {
             write("PONG" + str.substring(4));
         }
     }
 
-    private void handleString(String str) throws Exception{
+    private void handleString(String str) throws Exception {
         System.out.print(str);
         pingPong(str);
-        if (str.contains("End of /MOTD command")) {
+        if (str.contains("End of /MOTD command") || str.contains("MOTD File is missing")) {
             server = str.split(" ")[0].substring(1);
             System.out.println("My server: " + server);
             channelHandler.joiner();
         }
+        if (str.matches("(?s):(.*) PRIVMSG (.*)")) {
+            handleMessage(str);
+        }
+    }
+
+    private void handleMessage(String str) {
+        Pattern p = Pattern.compile(":(.*)!");
+        Matcher matcher = p.matcher(str);
+        if (matcher.find()) {
+            System.out.println(matcher.group(1));
+        }
+        str = str.replaceAll(":(.*) PRIVMSG ", "");
+        System.out.println(str);
     }
 
     @Override

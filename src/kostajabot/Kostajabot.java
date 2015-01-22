@@ -22,13 +22,13 @@ public class Kostajabot {
         TelnetConnectionHandler telnet;
         try {
             telnet = new TelnetConnectionHandler(conf);
-            while(true){
+            while (true) {
                 telnet.run();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
     }
 
 }

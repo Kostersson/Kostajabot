@@ -14,10 +14,12 @@ import java.util.ArrayList;
 public class ChannelHandler {
     private TelnetConnectionHandler client;
     private ArrayList<Channel> channels;
+    private boolean connected;
 
     public ChannelHandler(TelnetConnectionHandler telnetClient) {
         client = telnetClient;
         channels = new ArrayList<>();
+        connected = false;
         // tester
         addChannelToChannels("#kostajabot", "Quakenet");
     }
@@ -28,9 +30,12 @@ public class ChannelHandler {
     }
     
     public void joiner() throws Exception{
+        if(connected){
+            return;
+        }
+        connected = true;
         for (Channel channel : channels) {
             client.write("JOIN " + channel.getChannelName());
         }
-        
     }
 }
