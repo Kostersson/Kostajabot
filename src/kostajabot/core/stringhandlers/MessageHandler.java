@@ -15,14 +15,21 @@ public class MessageHandler {
     
     public void handleMessage(String str) {
         String username = null;
-        String message = null;
+        String channel = null;
+        String message;
         Pattern p = Pattern.compile(":(.*)!");
         Matcher matcher = p.matcher(str);
         if (matcher.find()) {
             username = matcher.group(1);
         }
         message = str.replaceAll(":(.*) PRIVMSG ", "");
-        System.out.println("<" + username + "> " + message);
+        p = Pattern.compile("(.*):");
+        matcher = p.matcher(message);
+        if (matcher.find()) {
+            channel = matcher.group(1).trim();
+        }
+        message = message.replaceFirst("(.*):", "");
+        System.out.println(channel + " < " + username + " > " + message);
     }
 
 }
