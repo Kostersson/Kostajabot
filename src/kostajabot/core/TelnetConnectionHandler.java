@@ -21,6 +21,7 @@ public class TelnetConnectionHandler implements Runnable {
     public TelnetConnectionHandler(Core coreObject,ConfigurationPropertiesLoader conf) throws Exception {
         core = coreObject;
         configuration = conf;
+        server = null;
         client.connect(configuration.getProperty("quakenetServer"), 
                 Integer.parseInt(configuration.getProperty("ircPort")));
         in = client.getInputStream();
@@ -67,7 +68,7 @@ public class TelnetConnectionHandler implements Runnable {
         }
     }
     
-    private String getServer(){
+    public String getServer(){
         return server;
     }
 

@@ -1,7 +1,9 @@
 package kostajabot.core;
 
 import configurations.ConfigurationPropertiesLoader;
+import configurations.exceptions.NoPropertyFoundException;
 import kostajabot.core.stringhandlers.MessageHandler;
+import kostajabot.core.stringhandlers.NumericProtocolMessageHandler;
 
 /**
  *
@@ -12,9 +14,11 @@ public class Core {
     private TelnetConnectionHandler connectionHandler;
     private ChannelHandler channelHandler;
     private MessageHandler messageHandler;
+    private NumericProtocolMessageHandler numericProtocolMessageHandler;
     
     public Core() {
         conf = new ConfigurationPropertiesLoader();
+        numericProtocolMessageHandler = new NumericProtocolMessageHandler(this);
         try {
             connectionHandler = new TelnetConnectionHandler(this, conf);
             channelHandler = new ChannelHandler(connectionHandler);
@@ -41,7 +45,13 @@ public class Core {
         channelHandler.joiner();
     }
     
-    public void handleString(String str){
+    public void handleString(String str) throws Exception{
+        String server = connectionHandler.getServer();
+        if( server != null){
+            if(str.matches("(?s):" + server + " (\\d*) (.*)")) {
+                numericProtocolMessageHandler.handleMessage(str);
+            }
+        }
         if (str.matches("(?s):(.*) PRIVMSG (.*)")) {
             messageHandler.handleMessage(str);
         }
@@ -49,5 +59,13 @@ public class Core {
     
     public void write(String str) throws Exception{
         connectionHandler.write(str);
+    }
+
+    public ChannelHandler getChannelHandler() {
+        return channelHandler;
+    }
+    
+    public String getName() throws NoPropertyFoundException{
+        return conf.getProperty("nick");
     }
 }
