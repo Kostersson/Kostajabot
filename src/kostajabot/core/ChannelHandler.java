@@ -6,6 +6,7 @@
 package kostajabot.core;
 
 import java.util.ArrayList;
+import kostajabot.core.exceptions.NoChannelNameException;
 
 /**
  *
@@ -21,12 +22,21 @@ public class ChannelHandler {
         channels = new ArrayList<>();
         connected = false;
         // tester
-        addChannelToChannels("#kostajabot", "Quakenet");
+        addChannelToChannels("#kostajabot", "quakenet");
     }
     
     public void addChannelToChannels(String name, String network){
         Channel channel = new Channel(name, network);
         channels.add(channel);
+    }
+    
+    public Channel getChannel(String name, String network) throws Exception{
+        for(Channel channel : channels){
+            if(channel.getChannelName().equals(name) && channel.getNetwork().equals(network)){
+                return channel;
+            }
+        }
+        return null;
     }
     
     public void joiner() throws Exception{

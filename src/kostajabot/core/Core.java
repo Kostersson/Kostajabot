@@ -49,7 +49,8 @@ public class Core {
         String server = connectionHandler.getServer();
         if( server != null){
             if(str.matches("(?s):" + server + " (\\d*) (.*)")) {
-                numericProtocolMessageHandler.handleMessage(str);
+                String protocolMessage = str.replaceFirst("(?s):" + server, "");
+                numericProtocolMessageHandler.handleMessage(protocolMessage);
             }
         }
         if (str.matches("(?s):(.*) PRIVMSG (.*)")) {
@@ -67,5 +68,9 @@ public class Core {
     
     public String getName() throws NoPropertyFoundException{
         return conf.getProperty("nick");
+    }
+    
+    public String getNetwork() throws NoPropertyFoundException{
+        return conf.getProperty("network");
     }
 }

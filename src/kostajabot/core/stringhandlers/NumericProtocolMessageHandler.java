@@ -19,11 +19,11 @@ public class NumericProtocolMessageHandler {
 
     public NumericProtocolMessageHandler(Core core) {
         this.core = core;
-        NumericProtocolMessageAutoloader numericProtocolMessageAutoloader = new NumericProtocolMessageAutoloader();
+        NumericProtocolMessageAutoloader numericProtocolMessageAutoloader = new NumericProtocolMessageAutoloader(core);
         numericProtocolMessageHandlers = numericProtocolMessageAutoloader.getNumericProtocolMessageHandlers();
     }
     
-    public void handleMessage(String str) throws NoPropertyFoundException{
+    public void handleMessage(String str) throws Exception{
         Pattern p = Pattern.compile("(\\d*) " + core.getName());
         Matcher matcher = p.matcher(str);
         if (matcher.find()) {

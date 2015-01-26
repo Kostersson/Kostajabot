@@ -1,6 +1,8 @@
 package kostajabot.core.stringhandlers.protocol;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import kostajabot.core.Core;
 
 /**
  *
@@ -8,17 +10,26 @@ import java.util.HashMap;
  */
 public class NumericProtocolMessageAutoloader {
 
-    private HashMap<Integer, NumericProtocolMessageInterface> numericProtocolMessageHandlers;
+    private final HashMap<Integer, NumericProtocolMessageInterface> numericProtocolMessageHandlers;
     ChannelNames channelNames;
+    Core core;
 
-    public NumericProtocolMessageAutoloader() {
-        numericProtocolMessageHandlers = new HashMap<Integer, NumericProtocolMessageInterface>();
-        addClassesToMap();
+    public NumericProtocolMessageAutoloader(Core core) {
+        this.core = core;
+        this.numericProtocolMessageHandlers = new HashMap<>();
+        addClassesToMap(createClassesArray());
     }
-
-    private void addClassesToMap() {
-        channelNames = new ChannelNames();
-        numericProtocolMessageHandlers.put(channelNames.getResponseNumber(), channelNames);
+    
+    private ArrayList createClassesArray(){
+        ArrayList<NumericProtocolMessageInterface> classes = new ArrayList<>();
+        classes.add(new ChannelNames(core));
+        return classes;
+    }
+    
+    private void addClassesToMap(ArrayList<NumericProtocolMessageInterface> arr) {
+        for( NumericProtocolMessageInterface val : arr){
+            numericProtocolMessageHandlers.put(val.getResponseNumber(), val);
+        }
     }
 
     public HashMap<Integer, NumericProtocolMessageInterface> getNumericProtocolMessageHandlers() {

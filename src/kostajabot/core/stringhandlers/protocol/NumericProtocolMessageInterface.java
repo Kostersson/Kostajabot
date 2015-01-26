@@ -9,5 +9,5 @@ public interface NumericProtocolMessageInterface {
     
     public int getResponseNumber();
     
-    public void handleMessage(String str);
+    public void handleMessage(String str) throws Exception;
 }
